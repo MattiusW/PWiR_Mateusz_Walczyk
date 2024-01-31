@@ -7,20 +7,34 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Server implements Runnable{
 
     private ArrayList<ConnectionHandler> connections;
+    private ServerSocket server;
+    private boolean done;
+    private ExecutorService pool;
+
+    public Server() {
+        connections = new ArrayList<>();
+        done = false;
+    }
 
     @Override
     public void run() {
         try {
-            ServerSocket server = new ServerSocket(9999);
-            Socket client = server.accept();
-            ConnectionHandler handler = new ConnectionHandler(client);
-            connections.add(handler);
+            server = new ServerSocket(9999);
+            pool = Executors.newCachedThreadPool();
+            while (!done) {
+                Socket client = server.accept();
+                ConnectionHandler handler = new ConnectionHandler(client);
+                connections.add(handler);
+                pool.execute(handler);
+            }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            shutDown();
         }
     }
 
@@ -28,6 +42,21 @@ public class Server implements Runnable{
         for (ConnectionHandler ch : connections) {
             if (ch != null) {
                 ch.sendMessage(message);
+            }
+        }
+    }
+
+    public void shutDown() {
+        done = true;
+        if (!server.isClosed()) {
+            try {
+                server.close();
+            }
+            catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            for (ConnectionHandler ch : connections) {
+                ch.shutdown();
             }
         }
     }
@@ -62,23 +91,37 @@ public class Server implements Runnable{
                             nickname = messageSplit[1];
                             out.println("Udalo sie zmienic nick na to " + nickname);
                         }else {
-                            out.println("");
+                            out.println("Nie ma nicku");
                         }
                     }
                     else if (message.startsWith(("/quit"))){
-
+                        broadcast(nickname + " uzytkownik opuscil chat");
+                        shutdown();
                     }else {
                         broadcast(nickname + ": " + message);
                     }
                 }
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                shutdown();
             }
         }
 
         public void sendMessage(String message) {
             out.println(message);
         }
-    }
 
+        public void shutdown() {
+            try {
+                in.close();
+                out.close();
+
+                if (!client.isClosed()) {
+                    client.close();
+                }
+            } catch (IOException e) {
+
+            }
+
+        }
+    }
 }
