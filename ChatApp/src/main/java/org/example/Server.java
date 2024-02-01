@@ -48,6 +48,7 @@ public class Server implements Runnable{
 
     public void shutDown() {
         done = true;
+        pool.shutdown();
         if (!server.isClosed()) {
             try {
                 server.close();
@@ -89,7 +90,7 @@ public class Server implements Runnable{
                             broadcast(nickname + " zmieniono nick na" + messageSplit[1]);
                             System.out.println(nickname + " zmieniono nick na " + messageSplit[1]);
                             nickname = messageSplit[1];
-                            out.println("Udalo sie zmienic nick na to " + nickname);
+                            out.println("Udalo sie zmienić nick na to " + nickname);
                         }else {
                             out.println("Nie ma nicku");
                         }

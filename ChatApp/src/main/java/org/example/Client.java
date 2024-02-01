@@ -6,7 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-public class Clinet implements Runnable {
+public class Client implements Runnable {
 
     private Socket client;
     private BufferedReader in;
@@ -16,7 +16,7 @@ public class Clinet implements Runnable {
     @Override
     public void run() {
         try {
-            Socket client = new Socket("127.0.0.1", 7777);
+            client = new Socket("127.0.0.1", 7777);
             out = new PrintWriter(client.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
@@ -70,7 +70,7 @@ public class Clinet implements Runnable {
     }
 
     public static void main(String[] args) {
-        Clinet clinet = new Clinet();
+        Client clinet = new Client();
         clinet.run();
     }
 }

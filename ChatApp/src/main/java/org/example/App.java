@@ -6,6 +6,5 @@ public class App
     {
         Server server = new Server();
         server.run();
-
     }
 }
