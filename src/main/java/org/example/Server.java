@@ -25,7 +25,7 @@ public class Server implements Runnable{
     @Override
     public void run() {
         try {
-            server = new ServerSocket(9999);
+            server = new ServerSocket(7777);
             pool = Executors.newCachedThreadPool();
             while (!done) {
                 Socket client = server.accept();
@@ -48,6 +48,7 @@ public class Server implements Runnable{
 
     public void shutDown() {
         done = true;
+        pool.shutdown();
         if (!server.isClosed()) {
             try {
                 server.close();
@@ -79,8 +80,8 @@ public class Server implements Runnable{
                 in = new BufferedReader(new InputStreamReader(client.getInputStream()));
                 out.println("Podaj swoj nick: ");
                 nickname = in.readLine();
-                System.out.println(nickname + " polaczono");
-                broadcast(nickname + " doloaczyl do czatu");
+                System.out.println(nickname + " dołączył do serwera");
+                broadcast(nickname + " dołączył do czatu");
                 String message;
                 while ((message = in.readLine()) != null) {
                     if (message.startsWith(("/nick "))) {
