@@ -10,11 +10,11 @@ public class Zad2 {
         Thread producer = new Thread(() -> {
             while (true) {
                 try {
-                    int generatedNumber = random.nextInt(10); // Generuje liczby od 0 do 9
+                    int generatedNumber = random.nextInt(10); 
                     System.out.println("Wygenerowano cyfrę: " + generatedNumber);
-                    queue.put(generatedNumber); // Umieszcza wygenerowaną cyfrę w kolejce
-                    if (generatedNumber == 0) { // Jeśli wygenerowano 0, pozwala na chwilę odpocząć
-                        Thread.sleep(1000); // Czekaj 1 sekundę przed wygenerowaniem nowej liczby
+                    queue.put(generatedNumber); 
+                    if (generatedNumber == 0) { 
+                        Thread.sleep(1000); 
                     }
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -28,13 +28,13 @@ public class Zad2 {
             StringBuilder currentNumber = new StringBuilder();
             while (true) {
                 try {
-                    Integer digit = queue.take(); // Pobiera cyfrę z kolejki
+                    Integer digit = queue.take(); 
                     if (digit == 0) {
                         if (currentNumber.length() > 0) {
                             System.out.println("Utworzono liczbę: " + currentNumber.append(digit));
-                            currentNumber.setLength(0); // Resetuje StringBuilder do tworzenia nowej liczby
+                            currentNumber.setLength(0); 
                         }
-                    } else if (!(currentNumber.length() == 0 && digit == 0)) { // Ignoruje początkowe zera
+                    } else if (!(currentNumber.length() == 0 && digit == 0)) { 
                         currentNumber.append(digit);
                     }
                 } catch (InterruptedException e) {
